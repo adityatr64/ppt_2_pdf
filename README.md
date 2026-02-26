@@ -21,6 +21,7 @@ Install at least one supported app for your OS:
 pypdf
 comtypes
 pillow
+customtkinter
 ```
 
 Notes:
@@ -32,15 +33,24 @@ Notes:
 1. Clone or download this repository
 2. Install dependencies:
 
+Windows:
 ```powershell
-pip install pypdf comtypes pillow
+python -m venv .venv
+.venv\Scripts\activate
+pip install pypdf comtypes pillow customtkinter
+```
+Linux / macOS
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install pypdf pillow customtkinter
 ```
 
 ## Usage
 
 Run the application:
 
-```powershell
+```sh
 python main.py
 ```
 
@@ -105,13 +115,15 @@ To package the application as a standalone .exe file:
 1. Install PyInstaller:
 
 ```powershell
+python -m venv .venv
+.venv\Scripts\activate
 pip install pyinstaller
 ```
 
 2. Build the executable:
 
 ```powershell
-pyinstaller --onefile --windowed --name "PPT2PDF" main.py
+pyinstaller --onedir --windowed --name "PPT2PDF" main.py
 ```
 
 3. The executable will be created in the `dist/` folder.
@@ -120,7 +132,7 @@ pyinstaller --onefile --windowed --name "PPT2PDF" main.py
 
 | Option | Description |
 |--------|-------------|
-| `--onefile` | Bundle everything into a single .exe |
+| `--onedir` | Bundle everything into a packaged application folder |
 | `--windowed` | Hide the console window |
 | `--name "PPT2PDF"` | Set the output filename |
 | `--icon=icon.ico` | Use a custom icon (optional) |
@@ -128,7 +140,7 @@ pyinstaller --onefile --windowed --name "PPT2PDF" main.py
 ### Full command with all modules:
 
 ```powershell
-pyinstaller --onefile --windowed --name "PPT2PDF" --add-data "views;views" --add-data "controllers;controllers" --add-data "services;services" main.py
+pyinstaller --onedir --windowed --name "PPT2PDF" --add-data "views;views" --add-data "controllers;controllers" --add-data "services;services" main.py
 ```
 
 **Note:** The resulting .exe still requires at least one supported conversion app to be installed on the target machine.

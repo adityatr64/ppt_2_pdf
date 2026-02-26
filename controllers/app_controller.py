@@ -48,6 +48,7 @@ class AppController:
         self.view.on_clear_all = self.clear_all
         self.view.on_move_up = self.move_up
         self.view.on_move_down = self.move_down
+        self.view.on_sort_files = self.sort_files
         self.view.on_convert = self.start_conversion
         self.view.on_convert_separate = self.start_separate_conversion
         self.view.on_drag_reorder = self.drag_reorder
@@ -91,6 +92,10 @@ class AppController:
             self.files.insert(to_index, i)
             self._refresh_list()
             self.view.set_selection(to_index)
+
+    def sort_files(self):
+        self.files.sort(key=lambda path: os.path.basename(path).lower())
+        self._refresh_list()
     
     def start_conversion(self):
         if not self.files:

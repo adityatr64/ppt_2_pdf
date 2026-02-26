@@ -3,12 +3,7 @@ Icon generation utilities.
 Creates application icons programmatically using PIL.
 
 ⚠️ THIS PART IS ENTIRELY MADE WITH AI ⚠️
-
 """
-
-
-
-
 
 import sys
 
