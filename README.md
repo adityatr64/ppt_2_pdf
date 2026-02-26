@@ -38,13 +38,19 @@ bash/pwsh :
 git clone https://github.com/adityatr64/ppt_2_pdf.git
 cd ppt_2_pdf
 ```
+Windows :
 ```
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt 
-pip install pypdf comtypes pillow customtkinter
 ```
+Macos :
+```
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt 
 
+```
 
 ## Usage
 
