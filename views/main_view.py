@@ -14,12 +14,12 @@ from tkinter import filedialog, messagebox
 from typing import Callable, List, Optional
 
 try:
-    from .icons import create_app_icons, get_photo_images
+    from .icons import apply_window_icon
 except ImportError:
     try:
-        from views.icons import create_app_icons, get_photo_images
+        from views.icons import apply_window_icon
     except ImportError:
-        from icons import create_app_icons, get_photo_images
+        from icons import apply_window_icon
 
 
 class MainView:
@@ -83,15 +83,10 @@ class MainView:
             )
 
     def _setup_window(self):
-        self.root.title("PPT to PDF Converter & Merger")
+        self.root.title("PPT 2 PDF")
         self.root.geometry("900x700")
         self.root.minsize(760, 620)
-
-        icons = create_app_icons()
-        if icons:
-            self.icon_photos = get_photo_images(icons)
-            if self.icon_photos:
-                self.root.iconphoto(True, *self.icon_photos) # pyright: ignore[reportArgumentType]
+        self.icon_photos = apply_window_icon(self.root)
 
     def _setup_ui(self):
         container = ctk.CTkFrame(self.root, corner_radius=0)

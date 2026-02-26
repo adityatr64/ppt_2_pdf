@@ -8,7 +8,7 @@ from pypdf import PdfWriter
 from typing import List, Callable, Optional
 
 # Shit's been documented using AI can have error in docs itself
-# Nvm That was a older version newwer version code is only written truly by human
+# Nvm That was a older version only windows version written truly by human
 # Linux and Macos are prone to errors
 
 class ConversionBackend(Enum):

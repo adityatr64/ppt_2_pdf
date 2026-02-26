@@ -1,0 +1,6 @@
+# requirements.txt
+
+comtypes>=1.4.15
+customtkinter>=5.2.2
+pillow>=12.1.1
+pypdf>=6.7.3

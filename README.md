@@ -33,23 +33,22 @@ Notes:
 1. Clone or download this repository
 2. Install dependencies:
 
-Windows:
-```powershell
+bash/pwsh :
+```sh
+git clone https://github.com/adityatr64/ppt_2_pdf.git
+cd ppt_2_pdf
+```
+```
 python -m venv .venv
 .venv\Scripts\activate
+pip install -r requirements.txt 
 pip install pypdf comtypes pillow customtkinter
 ```
-Linux / macOS
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install pypdf pillow customtkinter
-```
+
 
 ## Usage
 
-Run the application:
-
+Run the application from src:
 ```sh
 python main.py
 ```
@@ -60,8 +59,8 @@ python main.py
 2. Reorder files as needed using:
    - Drag and drop within the list
    - **Move Up** / **Move Down** buttons
+   - **Sort** to sort by name ascending
 3. Configure options:
-   - Delete temporary PDF files after merging (recommended)
    - Open PDF after conversion
 4. Click **Convert and Merge to PDF**
 5. Choose the output location and filename
@@ -79,10 +78,9 @@ ppt2pdf/
 │   ├── main_view.py             # UI components and layout
 │   ├── styles.py                # TTK styling configuration
 │   └── icons.py                 # Icon generation utilities
-├── services/
-│   ├── __init__.py
-│   └── converter_service.py     # PPT to PDF conversion and merging
-└── ppt_to_pdf_gui.py            # Legacy single-file version
+└── services/
+    ├── __init__.py
+    └── converter_service.py     # PPT to PDF conversion and merging
 ```
 
 ## Architecture
@@ -104,7 +102,7 @@ The application follows the **Service-View-Controller (SVC)** pattern:
 ## Notes
 
 - On startup, the app auto-detects available backends and picks the best one for your platform.
-- If no backend is detected, the app shows an install prompt with supported options.
+- If no backend is detected, the app shows an install prompt with supported options (Hopefully).
 - Large presentations may take longer to convert.
 - The application runs conversions in a background thread to keep the UI responsive.
 
@@ -123,7 +121,7 @@ pip install pyinstaller
 2. Build the executable:
 
 ```powershell
-pyinstaller --onedir --windowed --name "PPT2PDF" main.py
+pyinstaller --onedir --windowed --name "PPT 2 PDF" main.py --icon=assets/image.ico
 ```
 
 3. The executable will be created in the `dist/` folder.
@@ -137,13 +135,7 @@ pyinstaller --onedir --windowed --name "PPT2PDF" main.py
 | `--name "PPT2PDF"` | Set the output filename |
 | `--icon=icon.ico` | Use a custom icon (optional) |
 
-### Full command with all modules:
-
-```powershell
-pyinstaller --onedir --windowed --name "PPT2PDF" --add-data "views;views" --add-data "controllers;controllers" --add-data "services;services" main.py
-```
-
-**Note:** The resulting .exe still requires at least one supported conversion app to be installed on the target machine.
+**Note:** The resulting .exe/.app still requires at least one supported conversion app to be installed on the target machine.
 
 ## Troubleshooting
 
