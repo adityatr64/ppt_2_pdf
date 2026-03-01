@@ -59,7 +59,6 @@ class MainView:
 
         # Queue status
         self.queue_label: Optional[Any] = None
-        self._is_enabled = True
 
         self.drag_data = {"index": None}
         self._hover_index: Optional[int] = None
@@ -112,7 +111,7 @@ class MainView:
         self.icon_photos = apply_window_icon(self.root)
 
     def _setup_ui(self):
-        container = ctk.CTkScrollableFrame(self.root, corner_radius=0)
+        container = ctk.CTkFrame(self.root, corner_radius=0)
         container.pack(fill=tk.BOTH, expand=True, padx=16, pady=16)
 
         title = ctk.CTkLabel(
@@ -122,15 +121,41 @@ class MainView:
         )
         title.pack(anchor="w", pady=(4, 12), padx=10)
 
-        self._setup_file_list(container)
-        self._setup_buttons(container)
-        self._setup_options(container)
-        self._setup_progress(container)
-        self._setup_convert_buttons(container)
+        is_dark = ctk.get_appearance_mode().lower() == "dark"
+        pane_bg = "#3f3f3f" if is_dark else "#d7d7d7"
+        content_pane = tk.PanedWindow(
+            container,
+            orient=tk.VERTICAL,
+            sashrelief=tk.FLAT,
+            sashwidth=10,
+            sashpad=0,
+            showhandle=False,
+            opaqueresize=True,
+            bd=0,
+            bg=pane_bg,
+            proxybackground=pane_bg,
+            proxyborderwidth=0,
+            sashcursor="sb_v_double_arrow",
+        )
+        content_pane.pack(fill=tk.BOTH, expand=True, padx=10, pady=(0, 4))
+
+        list_section = ctk.CTkFrame(content_pane)
+        controls_pane = tk.Frame(content_pane, bd=0, highlightthickness=0, bg=pane_bg)
+        controls_section = ctk.CTkScrollableFrame(controls_pane, corner_radius=6)
+        controls_section.pack(fill=tk.BOTH, expand=True)
+
+        content_pane.add(list_section, minsize=220)
+        content_pane.add(controls_pane, minsize=220)
+
+        self._setup_file_list(list_section)
+        self._setup_buttons(controls_section)
+        self._setup_options(controls_section)
+        self._setup_progress(controls_section)
+        self._setup_convert_buttons(controls_section)
 
     def _setup_file_list(self, parent):
         list_frame = ctk.CTkFrame(parent)
-        list_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=(0, 10))
+        list_frame.pack(fill=tk.BOTH, expand=True, padx=0, pady=0)
 
         header = ctk.CTkLabel(
             list_frame,
@@ -173,7 +198,7 @@ class MainView:
             list_container,
             selectmode=tk.SINGLE,
             yscrollcommand=scrollbar.set,
-            font=(self.font_regular.cget("family"), 11),
+            font=(self.font_regular.cget("family"), int(self.font_regular.cget("size"))),
             activestyle="dotbox",
             borderwidth=0,
             highlightthickness=0,
@@ -486,9 +511,19 @@ class MainView:
             self._set_list_cursor(["arrow"])
 
     def _on_drag(self, event):
+        if self.drag_data["index"] is None:
+            return
+
+        edge_margin = 24
+        list_height = self.file_listbox.winfo_height()
+        if event.y < edge_margin:
+            self.file_listbox.yview_scroll(-1, "units")
+        elif event.y > max(edge_margin, list_height - edge_margin):
+            self.file_listbox.yview_scroll(1, "units")
+
         current_index = self.file_listbox.nearest(event.y)
         self._set_list_cursor(["closedhand", "exchange", "sizeall", "hand1"])
-        if self.drag_data["index"] is not None and current_index != self.drag_data["index"]:
+        if current_index != self.drag_data["index"]:
             if self.on_drag_reorder:
                 self.on_drag_reorder(self.drag_data["index"], current_index)
             self.drag_data["index"] = current_index
@@ -505,9 +540,22 @@ class MainView:
             self._set_list_cursor(["arrow"])
 
     def update_file_list(self, files: List[str]):
+        first_visible, _ = self.file_listbox.yview()
+        selected_index = self.get_selected_index()
+
         self.file_listbox.delete(0, tk.END)
         for i, file_path in enumerate(files, 1):
             self.file_listbox.insert(tk.END, f"{i}. {os.path.basename(file_path)}")
+
+        if files:
+            preferred_index = self.drag_data["index"] if self.drag_data["index"] is not None else selected_index
+            if preferred_index is not None:
+                preferred_index = max(0, min(preferred_index, len(files) - 1))
+                self.file_listbox.selection_set(preferred_index)
+                self.file_listbox.activate(preferred_index)
+
+            self.file_listbox.yview_moveto(first_visible)
+
         self._hover_index = None
 
     def update_task_tabs(self, tab_names: List[str], active_tab: str, running_tabs: List[str]):
@@ -550,49 +598,6 @@ class MainView:
             self.progress_var.set(progress)
             self.progress_bar.set(max(0.0, min(1.0, progress / 100.0)))
         self.root.update_idletasks()
-
-    def set_ui_enabled(self, enabled: bool):
-        """Generic method to enable/disable all interactive UI elements during conversion."""
-        self._is_enabled = enabled
-        state = "normal" if enabled else "disabled"
-        cursor = ["heart", "hand2", "arrow"] if enabled else ["arrow"]
-
-        # Disable file management buttons
-        file_buttons = [
-            self.add_files_btn,
-            self.remove_btn,
-            self.clear_all_btn,
-            self.move_up_btn,
-            self.move_down_btn,
-            self.sort_btn,
-            self.new_tab_btn,
-        ]
-        for btn in file_buttons:
-            if btn is not None:
-                btn.configure(state=state)
-
-        # Disable/enable convert buttons (hide during conversion)
-        if enabled:
-            if self.convert_btn is not None:
-                self.convert_btn.pack(side=tk.LEFT, padx=6)
-            if self.convert_separate_btn is not None:
-                self.convert_separate_btn.pack(side=tk.LEFT, padx=6)
-            if self.cancel_btn is not None:
-                self.cancel_btn.pack(side=tk.LEFT, padx=6)
-            self._set_button_cursor(self.convert_btn, cursor)
-            self._set_button_cursor(self.convert_separate_btn, cursor)
-            self._set_button_cursor(self.cancel_btn, cursor)
-        else:
-            if self.convert_btn is not None:
-                self.convert_btn.configure(state="disabled")
-            if self.convert_separate_btn is not None:
-                self.convert_separate_btn.configure(state="disabled")
-            if self.cancel_btn is not None:
-                self.cancel_btn.configure(state="normal")
-            self._set_button_cursor(self.cancel_btn, cursor)
-
-        for btn in file_buttons:
-            self._set_button_cursor(btn, cursor)
 
     def update_queue_status(self, queue_count: int):
         """Update running task count label."""

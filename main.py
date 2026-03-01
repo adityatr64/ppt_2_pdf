@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from views import MainView, setup_windows_taskbar
 from controllers import AppController
+import multiprocessing as mp
 
 
 def main():
@@ -17,4 +18,5 @@ def main():
 
 
 if __name__ == "__main__":
+    mp.freeze_support()
     main()

@@ -103,21 +103,13 @@ class AppController:
     def _is_task_cancelled(self, task_name: str) -> bool:
         return self.task_manager.is_task_cancelled(task_name)
 
-    def _reset_task_data(self, task: Dict[str, Any]) -> None:
-        task["files"].clear()
-        task["status"] = "Ready - Add files to get started"
-        task["progress"] = 0.0
-
     def _finalize_successful_task(self, task_name: str) -> None:
         completed_task = self._find_task(task_name)
         if not completed_task:
             return
 
-        if len(self._tab_names()) > 1:
-            self._remove_task(task_name)
-            return
-
-        self._reset_task_data(completed_task)
+        completed_task["status"] = "Completed"
+        completed_task["progress"] = 100.0
 
     def create_task_tab(self):
         self._create_task()
