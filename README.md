@@ -89,25 +89,34 @@ ppt_2_pdf/
 │   └── fonts/
 ├── controllers/
 │   ├── __init__.py
-│   ├── app_controller.py            # Main app event orchestration
+│   ├── app_controller.py            # App-level orchestration only
+│   ├── conversion_actions.py        # Conversion command handling
+│   ├── file_actions.py              # File list command handling
 │   ├── system_ops.py                # OS-level helpers
+│   ├── tab_display.py               # Task tab label/display mapping
 │   └── task_manager.py              # Per-tab task lifecycle
 ├── services/
 │   ├── __init__.py
+│   ├── backend_converters.py        # Backend-specific conversion execution
 │   ├── backend_support.py           # Backend detection/support checks
 │   ├── conversion_runtime.py        # Runtime conversion flow
 │   ├── conversion_types.py          # Shared conversion data types
-│   └── converter_service.py         # PPT -> PDF conversion implementation
+│   ├── conversion_workflows.py      # Merge/separate conversion workflows
+│   └── converter_service.py         # Service facade for conversion modules
 └── views/
    ├── __init__.py
-   ├── main_view.py                 # UI layout and widgets
+   ├── main_view.py                  # Main view facade + UI composition
+   ├── main_view_dialogs.py          # Dialog interactions
+   ├── main_view_interactions.py     # List interaction behavior
+   ├── main_view_tabs.py             # Task tab rendering
+   ├── main_view_theme.py            # Theme/font/cursor helpers
    ├── styles.py                    # UI styling
    └── icons.py                     # App/window icon helpers
 ```
 
 ## Architecture
 
-The application follows the **Service-View-Controller (SVC)** pattern:
+The application follows the **Service-View-Controller (SVC)** pattern with SRP-focused modules:
 
 - **Services**: Business logic for PPT to PDF conversion and PDF merging
 - **Views**: UI components, styling, and user interaction display

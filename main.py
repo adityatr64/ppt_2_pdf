@@ -12,7 +12,7 @@ def main():
     root = ctk.CTk()
     
     view = MainView(root)
-    controller = AppController(view)
+    AppController(view)
     
     root.mainloop()
 

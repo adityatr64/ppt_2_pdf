@@ -9,7 +9,7 @@ Defines colors and ttk styles for the application.
 """
 
 from tkinter import ttk
-from typing import Dict
+from typing import Dict, Optional
 
 
 # Application color palette
@@ -27,7 +27,7 @@ COLORS: Dict[str, str] = {
 }
 
 
-def setup_styles(colors: Dict[str, str] = None) -> ttk.Style: # pyright: ignore[reportArgumentType]
+def setup_styles(colors: Optional[Dict[str, str]] = None) -> ttk.Style:
     """
     Configure ttk styles for a modern look.
     
